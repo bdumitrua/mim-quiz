@@ -1,0 +1,21 @@
+@font-face {
+    font-family: "NEXT ART";
+    src: url("NEXTART-Bold.eot");
+    src: local("NEXT ART Bold"), local("NEXTART-Bold"),
+        url("NEXTART-Bold.eot?#iefix") format("embedded-opentype"),
+        url("NEXTART-Bold.woff2") format("woff2"),
+        url("NEXTART-Bold.woff") format("woff"),
+        url("NEXTART-Bold.ttf") format("truetype");
+    font-weight: bold;
+    font-style: normal;
+}
+@font-face {
+    font-family: "NEXT ART";
+    src: url("NEXTART.eot");
+    src: local("NEXT ART"), local("NEXTART"),
+        url("NEXTART.eot?#iefix") format("embedded-opentype"),
+        url("NEXTART.woff2") format("woff2"), url("NEXTART.woff") format("woff"),
+        url("NEXTART.ttf") format("truetype");
+    font-weight: normal;
+    font-style: normal;
+}

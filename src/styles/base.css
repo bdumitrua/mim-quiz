@@ -1,0 +1,76 @@
+@import url(../fonts/Next-art/stylesheet.css);
+
+:root {
+    --red: #ef032e;
+    --black: #0f0f16;
+}
+
+html {
+    font-size: 20px;
+}
+
+body {
+    max-width: 1920px;
+    margin: 0 auto;
+    padding: 140px 0 80px;
+    font-family: "NEXT ART", sans-serif;
+}
+
+h1 {
+    font-size: 80px;
+}
+
+h2 {
+    font-size: 30px;
+    font-weight: 700;
+}
+
+p {
+    font-size: 1.25rem;
+}
+
+.container {
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.button {
+    background-color: var(--red);
+    padding: 8.5px 9px;
+    border-radius: 13px;
+
+    font-size: 1rem;
+    font-weight: 700;
+    color: #fff;
+
+    text-transform: uppercase;
+}
+
+.button.disable {
+    background-color: rgba(239, 3, 46, 0.4);
+}
+
+.button-sm {
+    padding: 10px 14px;
+}
+
+.button-lg {
+    padding: 28px 86px;
+    border-radius: 20px;
+
+    font-size: 1.5rem;
+}
+
+.button-xl {
+    border-radius: 20px;
+    padding: 28px 115px;
+}
+
+@media screen and (max-width: 1000px) {
+}
+@media screen and (max-width: 768px) {
+}
+@media screen and (max-width: 480px) {
+}
+@media screen and (max-width: 360px) {
+}
