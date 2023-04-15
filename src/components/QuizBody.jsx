@@ -11,7 +11,7 @@ const QuizBody = () => {
     const [questionNumber, setQuestionNumber] = useState(0);
     const [actualAnswer, setActualAnswer] = useState(null);
     const [nextDisable, setNextDisable] = useState(true);
-    const [prevData, setPrevData] = useState(new Map());
+    const [prevData] = useState(new Map());
 
     const { title, questions, id } = quiz[questionNumber];
     const prevDisable = questionNumber === 0 ? true : false;
@@ -20,27 +20,66 @@ const QuizBody = () => {
         setActualAnswer([index, value]);
     };
 
-    const prevQuestion = () => {
-        if (questionNumber !== 0) {
-            setQuestionNumber((prev) => prev - 1);
-        }
-    };
-
     const nextQuestion = () => {
+        prevData.get(questionNumber + 1) !== undefined
+            ? setNextDisable(false)
+            : setNextDisable(true);
+
         if (questionNumber !== 7) {
             setQuestionNumber((prev) => prev + 1);
         }
     };
 
-    // Проверка доступности кнопки перехода на следующий вопрос
-    // Запись данных в "кэш"
+    const prevQuestion = () => {
+        prevData.get(questionNumber - 1) !== undefined
+            ? setNextDisable(false)
+            : setNextDisable(true);
+
+        if (questionNumber !== 0) {
+            setQuestionNumber((prev) => prev - 1);
+        }
+    };
+
+    // Короче, фронт-ендер, я тебе зачистку радио-боксов сделал и в благородство играть не буду:
+    // Если сможешь сделать возвращение старых вариантов и удаление автоматически-поставленных новых лучше - делай
+    // Фиг знает на кой тебе нужен читабельный код, но я в чужие дела не лезу, хочешь чище - значит есть зачем
+    const setPrevAnswer = () => {
+        let element = document.getElementById(
+            `radio-${questionNumber}-${prevData.get(questionNumber)}`
+        );
+
+        // Ставим чекбокс из сохранённых ответов
+        if (prevData.get(questionNumber) !== undefined) {
+            element.checked = true;
+        }
+
+        // Проверяем, не совпадает ли сохранённый ответ и тот, что мы поставили перед ним
+        if (prevData.get(questionNumber) !== prevData.get(questionNumber - 1)) {
+            // Убираем checked, который автоматически ставится при обновлении вопросов/инпутов
+            element = document.getElementById(
+                `radio-${questionNumber}-${prevData.get(questionNumber - 1)}`
+            );
+            if (element !== null) {
+                element.checked = false;
+            }
+        }
+    };
+
+    // При клике на вариант ответа
     useEffect(() => {
         if (actualAnswer && Array.isArray(actualAnswer)) {
+            // Запись данных
             prevData.set(questionNumber, actualAnswer[0]);
-            console.log(prevData);
+
+            // Даём доступ к следующему вопросу
             setNextDisable(false);
+            console.log(prevData);
         }
-    }, [actualAnswer]);
+    }, [actualAnswer, prevData]);
+
+    useEffect(() => {
+        setPrevAnswer();
+    }, [questionNumber, setPrevAnswer]);
 
     return (
         <section className="quiz" id="quiz">
@@ -56,11 +95,9 @@ const QuizBody = () => {
                                 <li key={index}>
                                     <label>
                                         <input
-                                            autoComplete="off"
                                             type="radio"
-                                            className="question__input"
                                             name="answers"
-                                            id={`radio-${index}`}
+                                            id={`radio-${questionNumber}-${index}`}
                                             onChange={() => {
                                                 inputHandler(index, value);
                                             }}
@@ -102,7 +139,12 @@ const QuizBody = () => {
                         )}
                         {questionNumber === 7 && (
                             <Link to="/result">
-                                <button className="button">
+                                <button
+                                    className={`button ${
+                                        nextDisable ? "disable" : ""
+                                    }`}
+                                    disabled={nextDisable}
+                                >
                                     завершить тест
                                 </button>
                             </Link>

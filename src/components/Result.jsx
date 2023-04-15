@@ -14,7 +14,7 @@ const Result = () => {
             <section className="answer">
                 <div className="left">
                     <h2>Твой результат:</h2>
-                    <img src={photo} alt="photo" />
+                    <img src={photo} alt="" />
                 </div>
                 <div className="right">
                     <h2>{name}</h2>
