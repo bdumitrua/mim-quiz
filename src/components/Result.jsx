@@ -4,11 +4,24 @@ import "./components.scss";
 import { memersInfo } from "../data";
 
 const Result = () => {
+    if (useLocation().search.length !== 3) {
+        window.location.replace("/");
+    }
+    console.log(useLocation().search);
+
     const path = useLocation().search.substring(1);
     const sex = path[0] - 1;
     const id = path[1] - 1;
-    const { photo, name, desc } = memersInfo[sex][id];
 
+    if (sex !== 0 && sex !== 1) {
+        window.location.replace("/");
+    }
+
+    if (id < 0 || id > 5) {
+        window.location.replace("/");
+    }
+
+    const { photo, name, desc } = memersInfo[sex][id];
     return (
         <>
             <section className="answer">

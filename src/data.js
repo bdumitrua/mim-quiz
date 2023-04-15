@@ -16,7 +16,7 @@ export const quiz = [
     {
         id: 1,
         title: "Кто ты?",
-        questions: [
+        answers: [
             {
                 text: "Мисс",
                 value: "1",
@@ -30,7 +30,7 @@ export const quiz = [
     {
         id: 2,
         title: "Как ты ведёшь себя в компании друзей?",
-        questions: [
+        answers: [
             {
                 text: "Я душа компании",
                 value: [Egor, Diana],
@@ -60,7 +60,7 @@ export const quiz = [
     {
         id: 3,
         title: "Какое у тебя хобби?",
-        questions: [
+        answers: [
             {
                 text: "Пою 24/7",
                 value: [Oleg, Masha],
@@ -90,7 +90,7 @@ export const quiz = [
     {
         id: 4,
         title: "Если бы ты участвовал в Мисс и Мистер, какую номинацию ты бы забрал??",
-        questions: [
+        answers: [
             {
                 text: "Мисс/мистер спорт",
                 value: [Sasha, Katya],
@@ -120,7 +120,7 @@ export const quiz = [
     {
         id: 5,
         title: "Какую музыку ты слушаешь?",
-        questions: [
+        answers: [
             {
                 text: "Постоянно на тусовках, поэтому слушаю только то, что в топах",
                 value: [Egor, Diana],
@@ -150,7 +150,7 @@ export const quiz = [
     {
         id: 6,
         title: "Какие шоу любишь смотреть:",
-        questions: [
+        answers: [
             {
                 text: "Бьюти блоги… ну а как без них?",
                 value: [Dana],
@@ -184,7 +184,7 @@ export const quiz = [
     {
         id: 7,
         title: "Какой из этих фактов лучше всего описывает тебя:",
-        questions: [
+        answers: [
             {
                 text: "У меня в детстве была асфальтная болезнь(я падала везде и всегда)",
                 value: [Masha],
@@ -238,7 +238,7 @@ export const quiz = [
     {
         id: 8,
         title: "Ты подписался на телеграмм канал участников?",
-        questions: [
+        answers: [
             {
                 text: "Да, подписался",
                 value: [],
