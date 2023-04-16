@@ -1,4 +1,4 @@
-import { Link, useLocation } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import "./components.scss";
 
 import { memersInfo } from "../data";
@@ -7,8 +7,6 @@ const Result = () => {
     if (useLocation().search.length !== 3) {
         window.location.replace("/");
     }
-    console.log(useLocation().search);
-
     const path = useLocation().search.substring(1);
     const sex = path[0] - 1;
     const id = path[1] - 1;
@@ -20,6 +18,12 @@ const Result = () => {
     if (id < 0 || id > 5) {
         window.location.replace("/");
     }
+
+    const resetData = () => {
+        localStorage.clear();
+        window.location.reload();
+        window.location.replace("/#quiz");
+    };
 
     const { photo, name, desc } = memersInfo[sex][id];
     return (
@@ -36,11 +40,14 @@ const Result = () => {
                 </div>
             </section>
             <div className="answer-button">
-                <Link to="/">
-                    <button className="button button-xl">
-                        пройти тест еще раз
-                    </button>
-                </Link>
+                <button
+                    className="button button-xl"
+                    onClick={() => {
+                        resetData();
+                    }}
+                >
+                    пройти тест еще раз
+                </button>
             </div>
         </>
     );

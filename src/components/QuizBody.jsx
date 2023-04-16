@@ -7,18 +7,30 @@ import logo from "../images/logo-circle.svg";
 import "./components.scss";
 
 const QuizBody = () => {
+    // Для пролистывания вопросов
     const [questionNumber, setQuestionNumber] = useState(0);
+    // Берём данные для вопросов
+    const { title, answers, id } = quiz[questionNumber];
+
+    // Для правильной работы кнопок перехода между вопросами
     const [nextDisable, setNextDisable] = useState(true);
-    const [answersData] = useState(new Map());
-    const [answersValues] = useState(new Map());
     const prevDisable = questionNumber === 0 ? true : false;
 
+    // Для хранения вариантов ответов
+    const [answersData, setAnswersData] = useState(new Map());
+    // Для хранения данных этих ответов
+    const [answersValues, setAnswersValues] = useState(new Map());
+
+    // При каждом новом выбранном варианте ответа - записываются его данные и делается бэкап
     const inputHandler = (index, value) => {
         answersData.set(questionNumber, index);
         answersValues.set(questionNumber, value);
         setNextDisable(false);
+
+        doBackUps();
     };
 
+    // Обработчики смены вопроса
     const nextQuestion = () => {
         answersData.get(questionNumber + 1) !== undefined
             ? setNextDisable(false)
@@ -39,59 +51,81 @@ const QuizBody = () => {
         }
     };
 
-    const handleData = () => {
-        const sex = answersValues.get(0);
-
-        const ABS = new Map(answersValues);
-        ABS.delete(0);
-
-        const women = new Map();
-        const men = new Map();
-
-        for (let index = 1; index <= 6; index++) {
-            women.set(index, 0);
-            men.set(index, 0);
-        }
-
-        for (let data of ABS) {
-            data[1].map((value) => {
-                if (value[0] === 1) {
-                    women.set(value[1], women.get(value[1]) + 1);
-                } else if (value[0] === 2) {
-                    men.set(value[1], men.get(value[1]) + 1);
-                }
-            });
-        }
-
-        let answer = [];
-
-        if (sex === 1) {
-            const womenArray = [];
-            women.forEach((value) => {
-                womenArray.push(value);
-            });
-
-            answer = [1, Math.max(...womenArray)];
-        } else {
-            const menArray = [];
-            men.forEach((value) => {
-                menArray.push(value);
-            });
-
-            answer = [2, Math.max(...menArray)];
-        }
-        console.log(answer);
-
-        window.location.replace(`/result/?${answer.join("")}`);
+    // Бэкапы
+    const doBackUps = () => {
+        localStorage.clear();
+        doAnswersBackUp();
+        doValuesBackUp();
     };
 
+    const doAnswersBackUp = () => {
+        const answersArray = [];
+        answersData.forEach((value) => {
+            answersArray.push(value);
+        });
+
+        localStorage.setItem("previous-data", JSON.stringify(answersArray));
+    };
+
+    const doValuesBackUp = () => {
+        answersValues.forEach((value, index) => {
+            localStorage.setItem(index, JSON.stringify(value));
+        });
+    };
+
+    const getAnswersBackUp = () => {
+        const key = "previous-data";
+        if (localStorage.getItem(key) === null) {
+            setAnswersData(new Map());
+            return;
+        }
+        const result = new Map();
+
+        let localData = JSON.parse(localStorage.getItem(key));
+        if (localData.length === 1) {
+            result.set(0, localData);
+        }
+
+        if (localData.length > 1) {
+            localData.map((value, index) => {
+                result.set(index, value);
+            });
+        }
+        setAnswersData(result);
+    };
+
+    const getValuesBackUp = () => {
+        const backups = new Map();
+        for (let i = 0; i < 8; i++) {
+            if (localStorage.getItem(i) === null) {
+                break;
+            }
+            backups.set(i, JSON.parse(localStorage.getItem(i)));
+        }
+        setAnswersValues(backups);
+    };
+
+    // Фетч бэкапов при загрузке сайта
+    const [isRetry, setIsRetry] = useState(false);
     useEffect(() => {
-        setPrevAnswer();
-    }, [questionNumber]);
+        if (isRetry === false) {
+            getAnswersBackUp();
+            getValuesBackUp();
+            setIsRetry(true);
+        }
+
+        if (isRetry === true && answersData.size > 0) {
+            setQuestionNumber(answersData.size - 1);
+        }
+    }, [isRetry]);
 
     // Короче, фронт-ендер, я тебе зачистку радио-боксов сделал и в благородство играть не буду:
     // Если сможешь сделать возвращение старых вариантов и удаление автоматически-поставленных новых лучше - делай
     // Фиг знает на кой тебе нужен читабельный код, но я в чужие дела не лезу, хочешь чище - значит есть зачем
+    useEffect(() => {
+        setPrevAnswer();
+    }, [questionNumber]);
+
     const setPrevAnswer = () => {
         let element = document.getElementById(
             `radio-${questionNumber}-${answersData.get(questionNumber)}`
@@ -117,80 +151,150 @@ const QuizBody = () => {
         }
     };
 
-    const { title, answers, id } = quiz[questionNumber];
+    // Рассчёт резульатата
+    // Многа букав, потому что работа с Map
+    const getResult = () => {
+        const sex = answersValues.get(0);
+
+        const finalValues = new Map(answersValues);
+        finalValues.delete(0);
+
+        const women = new Map();
+        const men = new Map();
+
+        for (let index = 1; index <= 6; index++) {
+            women.set(index, 0);
+            men.set(index, 0);
+        }
+
+        // Считаем соответствие каждому участнику, считая сколько раз его вариант был выбран
+        for (let data of finalValues) {
+            data[1].map((value) => {
+                if (value[0] === 1) {
+                    women.set(value[1], women.get(value[1]) + 1);
+                } else if (value[0] === 2) {
+                    men.set(value[1], men.get(value[1]) + 1);
+                }
+            });
+        }
+
+        // Разбираем Map в массив и считаем у какого участника больше всего голосов
+        // Если у нескольких одинаково - вроде как выбирается первый из них)
+        let answer = [];
+        if (sex === 1) {
+            const womenArray = [];
+            women.forEach((value) => {
+                womenArray.push(value);
+            });
+
+            answer = [1, Math.max(...womenArray)];
+        } else {
+            const menArray = [];
+            men.forEach((value) => {
+                menArray.push(value);
+            });
+
+            answer = [2, Math.max(...menArray)];
+        }
+
+        window.location.replace(`/result/?${answer.join("")}`);
+    };
+
+    // Очистка массивов и localStorage
+    const resetData = () => {
+        answersValues.clear();
+        answersData.clear();
+        localStorage.clear();
+
+        // Вместо перезагрузки страницы
+        setQuestionNumber(0);
+        document.getElementById(`radio-${questionNumber}-${0}`).checked = false;
+        document.getElementById(`radio-${questionNumber}-${1}`).checked = false;
+    };
+
     return (
-        <section className="quiz" id="quiz">
-            <div className="content">
-                <span className="top">
-                    <img src={logo} alt="МиМ" />
-                    <h2>{title}</h2>
-                </span>
-                <div className="body">
-                    <ul>
-                        {answers.map(({ text, value }, index) => {
-                            return (
-                                <li key={index}>
-                                    <label>
-                                        <input
-                                            type="radio"
-                                            name="answers"
-                                            id={`radio-${questionNumber}-${index}`}
-                                            onChange={() => {
-                                                inputHandler(index, value);
-                                            }}
-                                            value={value}
-                                        />
-                                        <p>{text}</p>
-                                    </label>
-                                </li>
-                            );
-                        })}
-                    </ul>
-                </div>
-                <span className="bottom">
-                    <p className="number">{`${id}/8`}</p>
-                    <span className="buttons">
-                        <button
-                            className={`button button-sm ${
-                                prevDisable ? "disable" : ""
-                            }`}
-                            disabled={prevDisable}
-                            onClick={() => {
-                                prevQuestion();
-                            }}
-                        >
-                            <img src={arrowLeft} alt="Назад" />
-                        </button>
-                        {questionNumber !== 7 && (
+        <>
+            <section className="quiz" id="quiz">
+                <div className="content">
+                    <span className="top">
+                        <img src={logo} alt="МиМ" />
+                        <h2>{title}</h2>
+                    </span>
+                    <div className="body">
+                        <ul>
+                            {answers.map(({ text, value }, index) => {
+                                return (
+                                    <li key={index}>
+                                        <label>
+                                            <input
+                                                type="radio"
+                                                name="answers"
+                                                id={`radio-${questionNumber}-${index}`}
+                                                onChange={() => {
+                                                    inputHandler(index, value);
+                                                }}
+                                                value={value}
+                                            />
+                                            <p>{text}</p>
+                                        </label>
+                                    </li>
+                                );
+                            })}
+                        </ul>
+                    </div>
+                    <span className="bottom">
+                        <p className="number">{`${id}/8`}</p>
+                        <span className="buttons">
                             <button
                                 className={`button button-sm ${
-                                    nextDisable ? "disable" : ""
+                                    prevDisable ? "disable" : ""
                                 }`}
-                                disabled={nextDisable}
+                                disabled={prevDisable}
                                 onClick={() => {
-                                    nextQuestion();
+                                    prevQuestion();
                                 }}
                             >
-                                <img src={arrowRight} alt="Вперёд" />
+                                <img src={arrowLeft} alt="Назад" />
                             </button>
-                        )}
-                        {questionNumber === 7 && (
-                            <button
-                                className={`button ${
-                                    nextDisable ? "disable" : ""
-                                }`}
-                                disabled={nextDisable}
-                                onClick={() => {
-                                    handleData();
-                                }}
-                            >
-                                завершить тест
-                            </button>
-                        )}
+                            {questionNumber !== 7 && (
+                                <button
+                                    className={`button button-sm ${
+                                        nextDisable ? "disable" : ""
+                                    }`}
+                                    disabled={nextDisable}
+                                    onClick={() => {
+                                        nextQuestion();
+                                    }}
+                                >
+                                    <img src={arrowRight} alt="Вперёд" />
+                                </button>
+                            )}
+                            {questionNumber === 7 && (
+                                <button
+                                    className={`button ${
+                                        nextDisable ? "disable" : ""
+                                    }`}
+                                    disabled={nextDisable}
+                                    onClick={() => {
+                                        getResult();
+                                    }}
+                                >
+                                    завершить тест
+                                </button>
+                            )}
+                        </span>
                     </span>
-                </span>
-            </div>
-        </section>
+                </div>
+            </section>
+            <button
+                className="button button-sm reset__button"
+                onClick={() => {
+                    resetData();
+                }}
+            >
+                Сбросить ответы
+            </button>
+        </>
     );
 };
 

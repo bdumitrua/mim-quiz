@@ -58,11 +58,15 @@ svg {
 
 input,
 button {
-    background-color: transparent;
     font-family: inherit;
     font-size: inherit;
     color: inherit;
+    background-color: transparent;
     transition: inherit;
+}
+
+button,
+label {
     -webkit-tap-highlight-color: transparent;
 }
 

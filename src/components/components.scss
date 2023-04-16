@@ -180,3 +180,132 @@
         text-align: center;
     }
 }
+
+.reset__button {
+    margin-top: 40px;
+}
+
+@media screen and (max-width: 1000px) {
+    @mixin cardSize {
+        width: calc(100% - 85px * 2);
+    }
+
+    .head {
+        h1 {
+            margin-bottom: 120px;
+        }
+
+        .intro {
+            .content {
+                max-width: 485px;
+            }
+
+            .image {
+                max-width: 320px;
+            }
+        }
+    }
+    .quiz {
+        @include cardSize();
+    }
+}
+@media screen and (max-width: 850px) {
+    @mixin cardSize {
+        width: 100%;
+    }
+
+    .head {
+        h1 {
+            margin-bottom: 105px;
+            text-align: start;
+        }
+        .intro {
+            flex-direction: column-reverse;
+
+            .content {
+                max-width: 100%;
+            }
+
+            .image {
+                max-width: 65%;
+                margin-bottom: 40px;
+                margin-left: auto;
+            }
+        }
+    }
+    .quiz {
+        @include cardSize();
+
+        .content {
+            .top {
+                gap: 1rem;
+
+                img {
+                    width: 60px;
+                    height: 60px;
+                }
+            }
+        }
+    }
+}
+
+@media screen and (max-width: 650px) {
+    @mixin cardSize {
+        width: 100%;
+    }
+
+    .quiz {
+        @include cardSize();
+        padding: 40px 30px 40px 20px;
+
+        margin-top: 50vh;
+        margin-bottom: 5vh;
+
+        .content {
+            .body {
+                ul {
+                    margin-left: 0;
+                }
+            }
+        }
+    }
+}
+
+@media screen and (max-width: 500px) {
+    @mixin cardSize {
+        width: 100%;
+    }
+
+    .quiz {
+        @include cardSize();
+
+        .content {
+            .top {
+                img {
+                    width: 100px;
+                    height: 100px;
+                }
+            }
+        }
+    }
+
+    .head {
+        height: calc(100vh - 80px);
+        max-height: calc(100vh - 80px);
+        h1 {
+            margin-bottom: 20px;
+            text-align: start;
+        }
+        .intro {
+            height: 70%;
+            .content {
+                max-width: 360px;
+            }
+
+            .image {
+                max-width: 80%;
+                margin: 50px 0 50px auto;
+            }
+        }
+    }
+}
