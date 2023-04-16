@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { quiz } from "../data";
 import arrowLeft from "../images/arrow-left.svg";
@@ -114,18 +114,45 @@ const QuizBody = () => {
             setIsRetry(true);
         }
 
-        if (isRetry === true && answersData.size > 0) {
+        if (isRetry && answersData.size > 0) {
             setQuestionNumber(answersData.size - 1);
+            setNextDisable(false);
         }
     }, [isRetry]);
 
-    // Короче, фронт-ендер, я тебе зачистку радио-боксов сделал и в благородство играть не буду:
-    // Если сможешь сделать возвращение старых вариантов и удаление автоматически-поставленных новых лучше - делай
-    // Фиг знает на кой тебе нужен читабельный код, но я в чужие дела не лезу, хочешь чище - значит есть зачем
+    // Для нормального скролла до опроса
+    const question = useRef(null);
+    useEffect(() => {
+        if (questionNumber !== 0 && isRetry) {
+            prepareToScroll();
+        }
+    }, [questionNumber]);
+
+    const prepareToScroll = () => {
+        if (question.current) {
+            if (question.current.clientHeight < 500) {
+                scrollToBottom(0);
+            } else {
+                scrollToBottom(question.current.clientHeight);
+            }
+        }
+    };
+
+    const scrollToBottom = (height) => {
+        window.scrollTo({
+            top: document.body.scrollHeight - height - 200,
+            left: 0,
+            behavior: "smooth",
+        });
+    };
+
     useEffect(() => {
         setPrevAnswer();
     }, [questionNumber]);
 
+    // Короче, фронт-ендер, я тебе зачистку радио-боксов сделал и в благородство играть не буду:
+    // Если сможешь сделать возвращение старых вариантов и удаление автоматически-поставленных новых лучше - делай
+    // Фиг знает на кой тебе нужен читабельный код, но я в чужие дела не лезу, хочешь чище - значит есть зачем
     const setPrevAnswer = () => {
         let element = document.getElementById(
             `radio-${questionNumber}-${answersData.get(questionNumber)}`
@@ -214,7 +241,7 @@ const QuizBody = () => {
 
     return (
         <>
-            <section className="quiz" id="quiz">
+            <section className="quiz" id="quiz" ref={question}>
                 <div className="content">
                     <span className="top">
                         <img src={logo} alt="МиМ" />

@@ -19,9 +19,17 @@ const Result = () => {
         window.location.replace("/");
     }
 
+    const scrollToBottom = () => {
+        window.scrollTo({
+            top: document.body.scrollHeight,
+            left: 0,
+            behavior: "smooth",
+        });
+    };
+    window.addEventListener("load", scrollToBottom);
+
     const resetData = () => {
         localStorage.clear();
-        window.location.reload();
         window.location.replace("/#quiz");
     };
 
