@@ -25,6 +25,7 @@ const QuizBody = () => {
     const inputHandler = (index, value) => {
         answersData.set(questionNumber, index);
         answersValues.set(questionNumber, value);
+
         setNextDisable(false);
 
         doBackUps();
@@ -181,7 +182,7 @@ const QuizBody = () => {
     // Рассчёт резульатата
     // Многа букав, потому что работа с Map
     const getResult = () => {
-        const sex = answersValues.get(0);
+        const sex = answersValues.get(0)[0];
 
         const finalValues = new Map(answersValues);
         finalValues.delete(0);
@@ -207,24 +208,28 @@ const QuizBody = () => {
 
         // Разбираем Map в массив и считаем у какого участника больше всего голосов
         // Если у нескольких одинаково - вроде как выбирается первый из них)
-        let answer = [];
+        let answer;
+        let max;
+
         if (sex === 1) {
             const womenArray = [];
             women.forEach((value) => {
                 womenArray.push(value);
             });
 
-            answer = [1, Math.max(...womenArray)];
+            max = Math.max(...womenArray);
+            answer = [1, womenArray.indexOf(max) + 1];
         } else {
             const menArray = [];
             men.forEach((value) => {
                 menArray.push(value);
             });
 
-            answer = [2, Math.max(...menArray)];
+            max = Math.max(...menArray);
+            answer = [2, menArray.indexOf(max) + 1];
         }
 
-        window.location.replace(`/result/?${answer.join("")}`);
+        window.location.replace(`/result/?${answer.join("")}#answer`);
     };
 
     // Очистка массивов и localStorage

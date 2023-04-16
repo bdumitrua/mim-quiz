@@ -36,7 +36,7 @@ const Result = () => {
     const { photo, name, desc } = memersInfo[sex][id];
     return (
         <>
-            <section className="answer">
+            <section className="answer" id="answer">
                 <div className="left">
                     <h2>Твой результат:</h2>
                     <img src={photo} alt="" />

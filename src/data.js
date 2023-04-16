@@ -67,7 +67,7 @@ export const quiz = [
             },
             {
                 text: "Не представляю свою жизнь без танца",
-                value: [Anya, Egor],
+                value: [Egor, Anya],
             },
             {
                 text: "Спорт и я - вещи неделимые",
