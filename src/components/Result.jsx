@@ -18,7 +18,7 @@ const Result = () => {
         window.location.replace("/#quiz");
     };
 
-    // Для скролла
+    // Для скролла при загрузке страницы
     const { innerHeight: height, innerWidth: weight } = window;
     useEffect(() => {
         setTimeout(() => {

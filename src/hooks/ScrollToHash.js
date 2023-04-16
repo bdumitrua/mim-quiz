@@ -7,10 +7,8 @@ const ScrollToHash = () => {
     useEffect(() => {
         if (location.hash) {
             let elem = document.getElementById(location.hash.slice(1));
-
             if (elem) {
                 let y = elem.getBoundingClientRect().top + window.pageYOffset;
-
                 window.scrollTo({ top: y - 30, behavior: "smooth" });
             }
         } else {
