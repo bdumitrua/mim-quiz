@@ -127,6 +127,7 @@
 
             .buttons {
                 display: flex;
+                align-items: center;
                 gap: 15px;
             }
 
@@ -183,6 +184,14 @@
 
 .reset__button {
     margin-top: 40px;
+}
+
+.showOnMobile {
+    display: none;
+}
+
+.hideOnMobile {
+    display: block;
 }
 
 @media screen and (max-width: 1100px) {
@@ -298,7 +307,21 @@
                     margin-left: 0;
                 }
             }
+            .bottom {
+                .buttons {
+                    width: 100%;
+                    justify-content: space-between;
+                    gap: 0;
+                }
+            }
         }
+    }
+    .showOnMobile {
+        display: block;
+    }
+
+    .hideOnMobile {
+        display: none;
     }
 }
 
@@ -315,13 +338,6 @@
                 img {
                     width: 100px;
                     height: 100px;
-                }
-            }
-            .bottom {
-                .buttons {
-                    width: 100%;
-                    justify-content: space-around;
-                    gap: 0;
                 }
             }
         }

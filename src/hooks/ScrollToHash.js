@@ -6,23 +6,11 @@ const ScrollToHash = () => {
 
     useEffect(() => {
         if (location.hash) {
-            let elem;
-
-            elem = document.getElementById(location.hash.slice(1));
+            let elem = document.getElementById(location.hash.slice(1));
 
             if (elem) {
-                let y;
-                if (
-                    location.hash === "#services" ||
-                    window.screen.width <= 880
-                ) {
-                    y = elem.getBoundingClientRect().top + window.pageYOffset;
-                } else {
-                    y =
-                        elem.getBoundingClientRect().top +
-                        window.pageYOffset -
-                        52;
-                }
+                let y = elem.getBoundingClientRect().top + window.pageYOffset;
+
                 window.scrollTo({ top: y, behavior: "smooth" });
             }
         } else {

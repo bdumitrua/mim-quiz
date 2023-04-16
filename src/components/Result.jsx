@@ -17,22 +17,28 @@ const Result = () => {
         window.location.replace("/#quiz");
     };
 
-    const scrollToBottom = () => {
+    const scrollToAnswer = () => {
+        const elemHeight = document.getElementById("answer").clientHeight;
         window.scrollTo({
-            top: document.body.scrollHeight,
+            top: document.body.scrollHeight - elemHeight - 170,
             left: 0,
             behavior: "smooth",
         });
     };
-    window.addEventListener("load", scrollToBottom);
-
     const { photo, name, desc } = memersInfo[sex][id];
+
     return (
         <>
             <section className="answer" id="answer">
                 <div className="left">
                     <h2>Твой результат:</h2>
-                    <img src={photo} alt="" />
+                    <img
+                        src={photo}
+                        alt=""
+                        onLoad={() => {
+                            scrollToAnswer();
+                        }}
+                    />
                 </div>
                 <div className="right">
                     <h2>{name}</h2>

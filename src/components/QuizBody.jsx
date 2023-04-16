@@ -175,10 +175,10 @@ const QuizBody = () => {
                         </ul>
                     </div>
                     <span className="bottom">
-                        <p className="number">{`${id}/8`}</p>
+                        <p className="number hideOnMobile">{`${id}/8`}</p>
                         <span className="buttons">
                             <button
-                                className={`button button-sm ${
+                                className={`button button-sm button-first${
                                     prevDisable ? "disable" : ""
                                 }`}
                                 disabled={prevDisable}
@@ -188,9 +188,12 @@ const QuizBody = () => {
                             >
                                 <img src={arrowLeft} alt="Назад" />
                             </button>
+                            {id < 8 && (
+                                <p className="number showOnMobile">{`${id}/8`}</p>
+                            )}
                             {questionNumber !== 7 && (
                                 <button
-                                    className={`button button-sm ${
+                                    className={`button button-sm button-last ${
                                         nextDisable ? "disable" : ""
                                     }`}
                                     disabled={nextDisable}
@@ -203,7 +206,7 @@ const QuizBody = () => {
                             )}
                             {questionNumber === 7 && (
                                 <button
-                                    className={`button ${
+                                    className={`button button-last ${
                                         nextDisable ? "disable" : ""
                                     }`}
                                     disabled={nextDisable}
