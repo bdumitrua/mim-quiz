@@ -4,6 +4,12 @@ import { quiz } from "../data";
 import arrowLeft from "../images/arrow-left.svg";
 import arrowRight from "../images/arrow-right.svg";
 import logo from "../images/logo-circle.svg";
+import {
+    doBackups,
+    getAnswersBackup,
+    getValuesBackup,
+} from "../scripts/backup";
+import { getResult } from "../scripts/getResult";
 import "./components.scss";
 
 const QuizBody = () => {
@@ -25,10 +31,9 @@ const QuizBody = () => {
     const inputHandler = (index, value) => {
         answersData.set(questionNumber, index);
         answersValues.set(questionNumber, value);
-
         setNextDisable(false);
 
-        doBackUps();
+        doBackups(answersData, answersValues);
     };
 
     // Обработчики смены вопроса
@@ -52,66 +57,13 @@ const QuizBody = () => {
         }
     };
 
-    // Бэкапы
-    const doBackUps = () => {
-        localStorage.clear();
-        doAnswersBackUp();
-        doValuesBackUp();
-    };
-
-    const doAnswersBackUp = () => {
-        const answersArray = [];
-        answersData.forEach((value) => {
-            answersArray.push(value);
-        });
-
-        localStorage.setItem("previous-data", JSON.stringify(answersArray));
-    };
-
-    const doValuesBackUp = () => {
-        answersValues.forEach((value, index) => {
-            localStorage.setItem(index, JSON.stringify(value));
-        });
-    };
-
-    const getAnswersBackUp = () => {
-        const key = "previous-data";
-        if (localStorage.getItem(key) === null) {
-            setAnswersData(new Map());
-            return;
-        }
-        const result = new Map();
-
-        let localData = JSON.parse(localStorage.getItem(key));
-        if (localData.length === 1) {
-            result.set(0, localData);
-        }
-
-        if (localData.length > 1) {
-            localData.map((value, index) => {
-                result.set(index, value);
-            });
-        }
-        setAnswersData(result);
-    };
-
-    const getValuesBackUp = () => {
-        const backups = new Map();
-        for (let i = 0; i < 8; i++) {
-            if (localStorage.getItem(i) === null) {
-                break;
-            }
-            backups.set(i, JSON.parse(localStorage.getItem(i)));
-        }
-        setAnswersValues(backups);
-    };
-
     // Фетч бэкапов при загрузке сайта
     const [isRetry, setIsRetry] = useState(false);
     useEffect(() => {
         if (isRetry === false) {
-            getAnswersBackUp();
-            getValuesBackUp();
+            setAnswersData(getAnswersBackup());
+            setAnswersValues(getValuesBackup());
+
             setIsRetry(true);
         }
 
@@ -121,7 +73,7 @@ const QuizBody = () => {
         }
     }, [isRetry]);
 
-    // Для нормального скролла до опроса
+    // Для скролл до опроса
     const question = useRef(null);
     useEffect(() => {
         if (questionNumber !== 0 && isRetry) {
@@ -147,16 +99,16 @@ const QuizBody = () => {
         });
     };
 
+    // Короче, фронт-ендер, я тебе зачистку радио-боксов сделал и в благородство играть не буду:
+    // Если сможешь сделать возвращение старых вариантов и удаление автоматически-поставленных новых лучше - делай
+    // Фиг знает на кой тебе нужен читабельный код, но я в чужие дела не лезу, хочешь чище - значит есть зачем
     useEffect(() => {
         setPrevAnswer();
     }, [questionNumber]);
 
-    // Короче, фронт-ендер, я тебе зачистку радио-боксов сделал и в благородство играть не буду:
-    // Если сможешь сделать возвращение старых вариантов и удаление автоматически-поставленных новых лучше - делай
-    // Фиг знает на кой тебе нужен читабельный код, но я в чужие дела не лезу, хочешь чище - значит есть зачем
     const setPrevAnswer = () => {
         let element = document.getElementById(
-            `radio-${questionNumber}-${answersData.get(questionNumber)}`
+            `radio-${answersData.get(questionNumber)}`
         );
 
         // Ставим чекбокс из сохранённых ответов
@@ -171,65 +123,12 @@ const QuizBody = () => {
         ) {
             // Убираем checked, который автоматически ставится при обновлении вопросов/инпутов
             element = document.getElementById(
-                `radio-${questionNumber}-${answersData.get(questionNumber - 1)}`
+                `radio-${answersData.get(questionNumber - 1)}`
             );
             if (element !== null) {
                 element.checked = false;
             }
         }
-    };
-
-    // Рассчёт резульатата
-    // Многа букав, потому что работа с Map
-    const getResult = () => {
-        const sex = answersValues.get(0)[0];
-
-        const finalValues = new Map(answersValues);
-        finalValues.delete(0);
-
-        const women = new Map();
-        const men = new Map();
-
-        for (let index = 1; index <= 6; index++) {
-            women.set(index, 0);
-            men.set(index, 0);
-        }
-
-        // Считаем соответствие каждому участнику, считая сколько раз его вариант был выбран
-        for (let data of finalValues) {
-            data[1].map((value) => {
-                if (value[0] === 1) {
-                    women.set(value[1], women.get(value[1]) + 1);
-                } else if (value[0] === 2) {
-                    men.set(value[1], men.get(value[1]) + 1);
-                }
-            });
-        }
-
-        // Разбираем Map в массив и считаем у какого участника больше всего голосов
-        // Если у нескольких одинаково - вроде как выбирается первый из них)
-        let answer;
-        let max;
-
-        if (sex === 1) {
-            const womenArray = [];
-            women.forEach((value) => {
-                womenArray.push(value);
-            });
-
-            max = Math.max(...womenArray);
-            answer = [1, womenArray.indexOf(max) + 1];
-        } else {
-            const menArray = [];
-            men.forEach((value) => {
-                menArray.push(value);
-            });
-
-            max = Math.max(...menArray);
-            answer = [2, menArray.indexOf(max) + 1];
-        }
-
-        window.location.replace(`/result/?${answer.join("")}#answer`);
     };
 
     // Очистка массивов и localStorage
@@ -240,8 +139,9 @@ const QuizBody = () => {
 
         // Вместо перезагрузки страницы
         setQuestionNumber(0);
-        document.getElementById(`radio-${questionNumber}-${0}`).checked = false;
-        document.getElementById(`radio-${questionNumber}-${1}`).checked = false;
+        setNextDisable(true);
+        document.getElementById(`radio-${0}`).checked = false;
+        document.getElementById(`radio-${1}`).checked = false;
     };
 
     return (
@@ -261,7 +161,7 @@ const QuizBody = () => {
                                             <input
                                                 type="radio"
                                                 name="answers"
-                                                id={`radio-${questionNumber}-${index}`}
+                                                id={`radio-${index}`}
                                                 onChange={() => {
                                                     inputHandler(index, value);
                                                 }}
@@ -308,7 +208,7 @@ const QuizBody = () => {
                                     }`}
                                     disabled={nextDisable}
                                     onClick={() => {
-                                        getResult();
+                                        getResult(answersValues);
                                     }}
                                 >
                                     завершить тест
