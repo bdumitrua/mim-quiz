@@ -6,12 +6,9 @@ import Head from "./components/Head";
 import QuizBody from "./components/QuizBody";
 import Result from "./components/Result";
 
-import ScrollToHash from "./hooks/ScrollToHash";
-
 function App() {
     return (
         <BrowserRouter>
-            <ScrollToHash />
             <div className="container">
                 <Head />
                 <Routes>

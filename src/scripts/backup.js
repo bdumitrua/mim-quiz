@@ -21,11 +21,11 @@ const doValuesBackup = (answersValues) => {
 };
 
 export const getAnswersBackup = () => {
+    const result = new Map();
     const key = "previous-data";
     if (localStorage.getItem(key) === null) {
-        return new Map();
+        return result;
     }
-    const result = new Map();
 
     const localData = JSON.parse(localStorage.getItem(key));
     if (localData.length === 1) {
@@ -37,11 +37,17 @@ export const getAnswersBackup = () => {
             result.set(index, value);
         });
     }
+
     return result;
 };
 
 export const getValuesBackup = () => {
     const backups = new Map();
+
+    if (localStorage.getItem(0) === null) {
+        return backups;
+    }
+
     for (let i = 0; i < 8; i++) {
         if (localStorage.getItem(i) === null) {
             break;

@@ -1,6 +1,7 @@
 import { useLocation } from "react-router-dom";
 import "./components.scss";
 
+import { useEffect } from "react";
 import { memersInfo } from "../data";
 
 const Result = () => {
@@ -17,14 +18,24 @@ const Result = () => {
         window.location.replace("/#quiz");
     };
 
-    const scrollToAnswer = () => {
-        const elemHeight = document.getElementById("answer").clientHeight;
-        window.scrollTo({
-            top: document.body.scrollHeight - elemHeight - 170,
-            left: 0,
-            behavior: "smooth",
-        });
-    };
+    // Для скролла
+    const { innerHeight: height, innerWidth: weight } = window;
+    useEffect(() => {
+        setTimeout(() => {
+            let scrollBack;
+            if (weight > 650) {
+                scrollBack = 0;
+            } else {
+                scrollBack = height + 170;
+            }
+            window.scrollTo({
+                top: document.body.scrollHeight - scrollBack,
+                left: 0,
+                behavior: "smooth",
+            });
+        }, 200);
+    }, []);
+
     const { photo, name, desc } = memersInfo[sex][id];
 
     return (
@@ -32,13 +43,7 @@ const Result = () => {
             <section className="answer" id="answer">
                 <div className="left">
                     <h2>Твой результат:</h2>
-                    <img
-                        src={photo}
-                        alt=""
-                        onLoad={() => {
-                            scrollToAnswer();
-                        }}
-                    />
+                    <img src={photo} alt="" />
                 </div>
                 <div className="right">
                     <h2>{name}</h2>

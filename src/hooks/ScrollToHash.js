@@ -11,7 +11,7 @@ const ScrollToHash = () => {
             if (elem) {
                 let y = elem.getBoundingClientRect().top + window.pageYOffset;
 
-                window.scrollTo({ top: y, behavior: "smooth" });
+                window.scrollTo({ top: y - 30, behavior: "smooth" });
             }
         } else {
             window.scrollTo({ top: 0, left: 0, behavior: "smooth" });

@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 
 import { quiz } from "../data";
+import ScrollToHash from "../hooks/ScrollToHash";
 import arrowLeft from "../images/arrow-left.svg";
 import arrowRight from "../images/arrow-right.svg";
 import logo from "../images/logo-circle.svg";
@@ -20,7 +21,7 @@ const QuizBody = () => {
 
     // Для правильной работы кнопок перехода между вопросами
     const [nextDisable, setNextDisable] = useState(true);
-    const prevDisable = questionNumber === 0 ? true : false;
+    const [prevDisable, setPrevDisable] = useState(true);
 
     // Для хранения вариантов ответов
     const [answersData, setAnswersData] = useState(new Map());
@@ -68,14 +69,17 @@ const QuizBody = () => {
         }
 
         if (isRetry && answersData.size > 0) {
-            setQuestionNumber(answersData.size - 1);
-            setNextDisable(false);
+            answersData.size < 8
+                ? setQuestionNumber(answersData.size)
+                : getResult(answersValues);
+            setNextDisable(true);
         }
     }, [isRetry]);
 
     // Для скролл до опроса
     const question = useRef(null);
     useEffect(() => {
+        questionNumber === 0 ? setPrevDisable(true) : setPrevDisable(false);
         if (questionNumber !== 0 && isRetry) {
             prepareToScroll();
         }
@@ -140,12 +144,14 @@ const QuizBody = () => {
         // Вместо перезагрузки страницы
         setQuestionNumber(0);
         setNextDisable(true);
+        setPrevDisable(true);
         document.getElementById(`radio-${0}`).checked = false;
         document.getElementById(`radio-${1}`).checked = false;
     };
 
     return (
         <>
+            <ScrollToHash />
             <section className="quiz" id="quiz" ref={question}>
                 <div className="content">
                     <span className="top">
@@ -178,7 +184,7 @@ const QuizBody = () => {
                         <p className="number hideOnMobile">{`${id}/8`}</p>
                         <span className="buttons">
                             <button
-                                className={`button button-sm button-first${
+                                className={`button button-sm ${
                                     prevDisable ? "disable" : ""
                                 }`}
                                 disabled={prevDisable}
@@ -193,7 +199,7 @@ const QuizBody = () => {
                             )}
                             {questionNumber !== 7 && (
                                 <button
-                                    className={`button button-sm button-last ${
+                                    className={`button button-sm ${
                                         nextDisable ? "disable" : ""
                                     }`}
                                     disabled={nextDisable}
