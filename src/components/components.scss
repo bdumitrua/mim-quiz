@@ -290,6 +290,20 @@
 }
 
 @media screen and (max-width: 650px) {
+    @media screen and (max-height: 779px) {
+        .head {
+            h1 {
+                margin-bottom: 50px;
+            }
+        }
+    }
+    @media screen and (max-height: 690px) {
+        .head {
+            h1 {
+                margin-bottom: 20px;
+            }
+        }
+    }
     @mixin cardSize {
         width: 100%;
     }
@@ -388,6 +402,21 @@
                 max-width: 270px;
                 margin-top: 1rem;
             }
+        }
+    }
+}
+
+@media screen and (max-height: 779px) {
+    .head .intro .image {
+        max-width: 60%;
+        margin: 20px 0 20px auto;
+    }
+}
+
+@media screen and (max-height: 670px) {
+    .head {
+        h1 {
+            font-size: 30px;
         }
     }
 }
