@@ -156,7 +156,18 @@ const QuizBody = () => {
                 <div className="content">
                     <span className="top">
                         <img src={logo} alt="МиМ" />
-                        <h2>{title}</h2>
+                        <h2>
+                            {title}{" "}
+                            {questionNumber === 7 && (
+                                <a
+                                    href="https://t.me/missandmisterrguk"
+                                    target="_blank"
+                                    className="tg-link"
+                                >
+                                    Ссылочка
+                                </a>
+                            )}
+                        </h2>
                     </span>
                     <div className="body">
                         <ul>
